@@ -43,16 +43,25 @@ def make_paths(file_results):
     return _file_results.set_index(['root', 'file'], verify_integrity=True)
 
 
-def grep_files(pattern, file_paths):
+def grep_files(pattern, file_paths, encoding=None):
 
     _found_records = list()
+
     for path in file_paths:
-        for line in open(path, 'r'):
-            if re.search(pattern, line):
-                _found_records.append([path, line.strip(), pattern])
+        try:
+            for line in open(path, 'r', encoding=encoding):
+                if re.search(pattern, line):
+                    _found_records.append([path, line.strip(), pattern])
+        except Exception as e:
+            print(f"Failed on {path} with exception {e}")
 
     return pd.DataFrame(_found_records, columns=['path', 'line', 'pattern']).set_index(
         ['path'])
+
+
+def get_file_stats(file_paths):
+    return file_paths.map(os.stat)
+
 
 if __name__ == '__main__':
     walk_results = walk(r'.')
@@ -61,4 +70,11 @@ if __name__ == '__main__':
     print(make_dirs(walk_results).to_markdown())
     print(make_paths(make_files(walk_results)).to_markdown())
 
-    print(grep_files('walk', make_paths(make_files(walk_results))['path']))
+    get_file_stats(make_paths(make_files(walk_results))['path']).apply(pd.Series)
+
+    grep_result = grep_files(
+        pattern='walk',
+        file_paths=make_paths(make_files(walk_results))['path'],
+        encoding='latin-1'
+    )
+    print(grep_result)
