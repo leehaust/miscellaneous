@@ -49,9 +49,10 @@ def grep_files(pattern, file_paths, encoding=None):
 
     for path in file_paths:
         try:
-            for line in open(path, 'r', encoding=encoding):
-                if re.search(pattern, line):
-                    _found_records.append([path, line.strip(), pattern])
+            with open(path, 'r', encoding=encoding) as f:
+                for line in f.readlines():
+                    if re.search(pattern, line):
+                        _found_records.append([path, line.strip(), pattern])
         except Exception as e:
             print(f"Failed on {path} with exception {e}")
 
