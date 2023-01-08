@@ -49,6 +49,8 @@ def grep_files(pattern, file_paths, encoding=None):
 
     for path in file_paths:
         try:
+            print(path)
+            print(os.stat(path))
             with open(path, 'r', encoding=encoding) as f:
                 for line in f.readlines():
                     if re.search(pattern, line):
@@ -66,10 +68,10 @@ def get_file_stats(file_paths):
 
 if __name__ == '__main__':
     walk_results = walk(r'.')
-    print(walk_results.to_markdown())
-    print(make_files(walk_results).to_markdown())
-    print(make_dirs(walk_results).to_markdown())
-    print(make_paths(make_files(walk_results)).to_markdown())
+    print(walk_results)
+    print(make_files(walk_results))
+    print(make_dirs(walk_results))
+    print(make_paths(make_files(walk_results)))
 
     get_file_stats(make_paths(make_files(walk_results))['path']).apply(pd.Series)
 
