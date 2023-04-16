@@ -1,3 +1,4 @@
 pytest
 pandas
 tabulate  # pandas.DataFrame.to_markdown()
+pyarrow
